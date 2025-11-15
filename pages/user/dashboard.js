@@ -7,6 +7,8 @@ import {
   where,
   onSnapshot,
   addDoc,
+  deleteDoc,
+  doc,
   serverTimestamp,
 } from "firebase/firestore";
 import dynamic from "next/dynamic";
@@ -21,16 +23,19 @@ export default function UserDashboard() {
   const [user, setUser] = useState(null);
   const [location, setLocation] = useState([9.0765, 7.3986]);
   const [orders, setOrders] = useState([]);
+
   const [form, setForm] = useState({
     size: "10mm",
     tons: 1,
     payment: "pay_on_delivery",
   });
 
+  // ===========================================================
+  // AUTH + LOAD USER ORDERS
+  // ===========================================================
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
       if (!u) {
-        setUser(null);
         setOrders([]);
         return;
       }
@@ -38,23 +43,25 @@ export default function UserDashboard() {
 
       const q = query(collection(db, "orders"), where("uid", "==", u.uid));
       const off = onSnapshot(q, (snap) => {
-        setOrders(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+        const all = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        setOrders(all);
       });
 
-      // clean up snapshot
       return () => off();
     });
 
     return () => unsub();
   }, []);
 
+  // ===========================================================
+  // PLACE ORDER
+  // ===========================================================
   const placeOrder = async () => {
     if (!user) return alert("Log in first");
     if (!location) return alert("Select delivery location");
 
     const tracking = nanoid(8).toUpperCase();
 
-    // ensure order has all required fields and Firestore-safe formats
     const orderData = {
       uid: user.uid,
       size: form.size,
@@ -68,25 +75,53 @@ export default function UserDashboard() {
 
     try {
       await addDoc(collection(db, "orders"), orderData);
-      alert("Order placed — tracking: " + tracking);
+      alert("Order placed — Tracking: " + tracking);
     } catch (err) {
       console.error(err);
-      alert("Could not place order: " + err.message);
+      alert("Error placing order: " + err.message);
     }
   };
 
+  // ===========================================================
+  // DELETE ORDER
+  // ===========================================================
+  const deleteOrder = async (order) => {
+    if (!window.confirm("Delete this order?")) return;
+
+    try {
+      await deleteDoc(doc(db, "orders", order.id));
+    } catch (err) {
+      console.error(err);
+      alert("Could not delete order.");
+    }
+  };
+
+  // ===========================================================
+  // NAVIGATE TO TRACKING PAGE
+  // ===========================================================
   const onTrack = (order) => {
     window.location.href = `/user/order?id=${order.id}`;
   };
+
+  // ===========================================================
+  // SPLIT ORDERS
+  // ===========================================================
+  const ongoing = orders.filter(
+    (o) => o.status !== "completed"
+  );
+  const completed = orders.filter((o) => o.status === "completed");
 
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">User Dashboard</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        {/* LEFT — PLACE NEW ORDER */}
         <div>
           <h3 className="font-semibold">Place New Order</h3>
-          <label className="block mt-2">Chipping size</label>
+
+          <label className="block mt-2">Chipping Size</label>
           <select
             value={form.size}
             onChange={(e) => setForm({ ...form, size: e.target.value })}
@@ -128,14 +163,38 @@ export default function UserDashboard() {
           </button>
         </div>
 
+        {/* RIGHT — USER ORDERS */}
         <div>
-          <h3 className="font-semibold">Your Orders</h3>
+          {/* ONGOING */}
+          <h3 className="font-semibold">Ongoing Orders</h3>
           <div className="space-y-3 mt-3">
-            {orders.length === 0 ? (
-              <div className="text-gray-500">No orders</div>
+            {ongoing.length === 0 ? (
+              <div className="text-gray-500">No ongoing orders</div>
             ) : (
-              orders.map((o) => (
-                <OrderCard key={o.id} order={o} onTrack={onTrack} />
+              ongoing.map((o) => (
+                <OrderCard
+                  key={o.id}
+                  order={o}
+                  onTrack={onTrack}
+                  onDelete={deleteOrder}
+                />
+              ))
+            )}
+          </div>
+
+          {/* COMPLETED */}
+          <h3 className="font-semibold mt-6">Completed Orders</h3>
+          <div className="space-y-3 mt-3">
+            {completed.length === 0 ? (
+              <div className="text-gray-500">No completed orders yet</div>
+            ) : (
+              completed.map((o) => (
+                <OrderCard
+                  key={o.id}
+                  order={o}
+                  onTrack={onTrack}
+                  onDelete={deleteOrder}
+                />
               ))
             )}
           </div>

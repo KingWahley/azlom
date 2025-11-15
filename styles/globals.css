@@ -3,3 +3,9 @@
 @tailwind utilities;
 html,body,#__next{height:100%;}
 .leaflet-container{height:400px;width:100%;}
+/* Prevent dark mode from forcing white text inside absolute dropdowns */
+.suggestion-dropdown {
+  color: black !important;
+  background: white !important;
+  isolation: isolate;
+}
