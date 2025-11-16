@@ -20,7 +20,8 @@ export default function Layout({ children }) {
           {/* NAVIGATION */}
           <nav className="space-x-4 text-sm flex items-center">
             <Link href="/">Home</Link>
-            <Link href="/register">Register</Link>
+            <Link href="/auth/register-driver">Register Driver</Link>
+            <Link href="/auth/register-user">Register Client</Link>
             <Link href="/login">Login</Link>
 
             {/* LOGOUT BUTTON */}

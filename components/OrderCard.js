@@ -1,3 +1,6 @@
+// design of the order card display
+
+
 import { generateReceiptPDF } from "./receipt";
 
 export default function OrderCard({ order, onTrack, onDelete }) {

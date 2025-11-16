@@ -23,12 +23,6 @@
       "static/chunks/node_modules_leaflet_dist_leaflet_css.js"
     ]
   },
-  "driver\\dashboard.js -> ../../components/MapTracker": {
-    "id": "driver\\dashboard.js -> ../../components/MapTracker",
-    "files": [
-      "static/chunks/components_MapTracker_js.js"
-    ]
-  },
   "user\\dashboard.js -> ../../components/MapPicker": {
     "id": "user\\dashboard.js -> ../../components/MapPicker",
     "files": [

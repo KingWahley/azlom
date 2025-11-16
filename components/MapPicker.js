@@ -1,3 +1,7 @@
+
+// this is the map picker component where the customer picks their location, use gps location and search
+
+
 import { useState, useEffect } from "react";
 import {
   MapContainer,

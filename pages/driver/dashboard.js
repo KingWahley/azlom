@@ -1,3 +1,5 @@
+// DRIVER DASHBOARD COMPONENT 
+
 import { useEffect, useState } from "react";
 import { auth, db } from "../../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -299,7 +301,7 @@ export default function DriverDashboard() {
               <div className="font-semibold">{currentOrder.trackingCode}</div>
               <div className="text-sm mb-4">Status: {currentOrder.status}</div>
 
-              {/* CUSTOMER */}
+              {/* CUSTOMER DETAILS DISPLAYED HERE */}
               <div className="border rounded p-3 bg-gray-50 mb-4">
                 <h4 className="font-semibold mb-2">Customer Details</h4>
 
