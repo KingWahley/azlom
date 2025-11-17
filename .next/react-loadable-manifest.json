@@ -28,5 +28,11 @@
     "files": [
       "static/chunks/components_MapPicker_js.js"
     ]
+  },
+  "user\\order.js -> ../../components/MapTracker": {
+    "id": "user\\order.js -> ../../components/MapTracker",
+    "files": [
+      "static/chunks/components_MapTracker_js.js"
+    ]
   }
 }

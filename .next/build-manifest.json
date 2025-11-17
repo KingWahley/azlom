@@ -29,6 +29,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/user/dashboard.js"
+    ],
+    "/user/order": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/user/order.js"
     ]
   },
   "ampFirstPages": []
